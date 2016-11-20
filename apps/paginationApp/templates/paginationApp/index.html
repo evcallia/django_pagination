@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Pagination</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <style media="screen">
+            .container{
+                max-width: 850px;
+                margin: auto;
+            }
+            .page-numbers{
+                text-align: right;
+            }
+            table{
+                text-align: center;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="filters">
+                <form>
+                    {% csrf_token %}
+                    Name: <input type="text" name="name">
+                    From: <input type="date" name="fromDate">
+                    Date: <input type="date" name="toDate">
+                </form>
+            </div>
+            <div class="page-numbers">
+                {% for x in pageRange %}
+                    <a href="">{{forloop.counter}}</a>
+                {% endfor %}
+            </div>
+            <div class="table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>leads_id</th>
+                            <th>first name</th>
+                            <th>last name</th>
+                            <th>registered datetime</th>
+                            <th>email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in shownUsers %}
+                            <tr>
+                                <td>{{user.id}}</td>
+                                <td>{{user.firstName}}</td>
+                                <td>{{user.lastName}}</td>
+                                <td>{{user.created_at|date:'Y-m-d'}}</td>
+                                <td>{{user.email}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var page = 1;
+                $(document.body).on('click', 'a', function(e){
+                    e.preventDefault();
+                    page = $(this).html();
+                    getData();
+                });
+
+                $('form').change(function(){
+                    page = 1;
+                    getData();
+                });
+
+                $('form').submit(function(e){
+                    e.preventDefault();
+                });
+
+                function getData(){
+                    $('form').append('<input type="hidden" name="page" value="'+page+'">')
+                    $.post('/', $('form').serialize(), function(serverResponse){
+                        $('.table').html($(serverResponse).find('table'))[0];
+                        $('.page-numbers').html($(serverResponse).find('.page-numbers'))[0];
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>
