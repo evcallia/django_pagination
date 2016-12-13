@@ -11,19 +11,27 @@
             }
             .page-numbers{
                 text-align: right;
+                margin-top: 50px;
             }
             table{
                 text-align: center;
                 width: 100%;
             }
+            header{
+                margin: 40px;
+                text-align: center;
+            }
         </style>
     </head>
     <body>
         <div class="container">
+            <header>
+                <h1>Pagination</h1>
+            </header>
             <div class="filters">
                 <form>
                     {% csrf_token %}
-                    Name: <input type="text" name="name">
+                    Name: <input type="text" name="name" autocomplete="off">
                     From: <input type="date" name="fromDate">
                     Date: <input type="date" name="toDate">
                 </form>
@@ -37,11 +45,11 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>leads_id</th>
-                            <th>first name</th>
-                            <th>last name</th>
-                            <th>registered datetime</th>
-                            <th>email</th>
+                            <th>Leads Id</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Registered Datetime</th>
+                            <th>Email</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -75,6 +83,10 @@
                 $('form').submit(function(e){
                     e.preventDefault();
                 });
+
+                $('input[type=text]').keydown(function(e){
+                    getData();
+                })
 
                 function getData(){
                     $('form').append('<input type="hidden" name="page" value="'+page+'">')
